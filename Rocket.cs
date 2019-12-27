@@ -10,7 +10,8 @@ namespace RocketGame
     public class Rocket
     {
         public Engine Engine;
-        public const float MaxFuelMass = 8000;
+        public const float MaxFuelMass = 1000;
+        public float FuelPercent => RemainingFuelMass / MaxFuelMass;
 
         public float DryMass = 20000;
         public float RemainingFuelMass;

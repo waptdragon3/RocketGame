@@ -73,7 +73,7 @@ namespace RocketGame.FlightSystem
         {
             get
             {
-                if (Name.ToLower().Equals("fuel")) return RG.Rocket.RemainingFuelMass;
+                if (Name.ToLower().Equals("fuel")) return RG.Rocket.FuelPercent;
                 if (Name.ToLower().Equals("velx")) return RG.Rocket.Velocity.X;
                 if (Name.ToLower().Equals("vely")) return RG.Rocket.Velocity.Y;
                 if (Name.ToLower().Equals("angv")) return RG.Rocket.AngularVelocity;

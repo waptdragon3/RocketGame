@@ -20,6 +20,7 @@ namespace RocketGame
             window.Closed += Window_Closed;
             Clock clock = new Clock();
             Font font = new Font("resources/prstart.ttf");
+            UI ui = new UI(window);
             while(window.IsOpen)
             {
                 FrameTime = clock.Restart().AsSeconds();
@@ -31,6 +32,8 @@ namespace RocketGame
 
                 Text dv = new Text(Rocket.Velocity.Mag.ToString("0.00")+ " m/s", font);
                 window.Draw(dv);
+
+                ui.Draw();
 
                 window.Display();
             }
