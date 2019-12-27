@@ -24,6 +24,7 @@ namespace RocketGame
 
         public Vector2 Position;
         public float Rotation;
+        public float TGTRotation;
         public Vector2 Fwd => Vector2.FromAngle(Rotation);
         public Vector2 Velocity;
         public float AngularVelocity;
@@ -39,6 +40,7 @@ namespace RocketGame
             Throttle = 1;
             //AngularVelocity = 360;
             this.Position = new Vector2(640, 650);
+            TGTRotation = 0;
             ActiveProgram = Program.Parse("");
         }
 
@@ -65,6 +67,9 @@ namespace RocketGame
             Rotation += AngularVelocity * RG.FrameTime;
             Position += Velocity * RG.FrameTime*1;
 
+            ActiveProgram.RunFrame(RG.FrameTime);
+
+            AngularVelocity += (TGTRotation - Rotation) * RG.FrameTime * 90;
             Velocity += Vector2.Down * RG.Planet.Gravity * RG.FrameTime;
             Vector2 thrust = Fwd * Engine.F * Throttle;
             if (RemainingFuelMass > 0)

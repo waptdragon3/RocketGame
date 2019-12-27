@@ -7,13 +7,26 @@ namespace RocketGame.FlightSystem
     public class Program
     {
         public RAM RAM;
+        private Instruction[] Instructions;
+        public int CurrentInstructionIndex = 0;
+        private float waitTime = 0;
         public static Program Parse(string pro)
         {
-            return new Program();
+            var Instructions = new Instruction[0];
+            var p = new Program();
+            p.Instructions = Instructions;
+            p.RAM = new RAM();
+            return p;
         }
         public void RunFrame(float frameTime)
         {
-
+            if (CurrentInstructionIndex == Instructions.Length)
+                return;
+            waitTime -= frameTime;
+            while(waitTime <= 0)
+            {
+                waitTime = Instructions[CurrentInstructionIndex].Run();
+            }
         }
         
     }
@@ -30,9 +43,10 @@ namespace RocketGame.FlightSystem
             set { mem[(int)adress] = value; }
         }
     }
-    abstract class Argument
+
+    [Flags] public enum AType { LITERAL = 1, REGISTER = 2, MEMORY = 4, GETABLE=LITERAL|REGISTER|MEMORY, SETTABLE=REGISTER|MEMORY}
+    public abstract class Argument
     {
-        public enum AType { LITERAL, REGISTER, MEMORY }
         public AType Type;
         public abstract float Value { get; set; }
         protected Argument(AType type) { Type = type; }
@@ -75,6 +89,7 @@ namespace RocketGame.FlightSystem
             set
             {
                 if (Name.ToLower().Equals("ttl")) RG.Rocket.Throttle = value;
+                if (Name.ToLower().Equals("rot")) RG.Rocket.TGTRotation = value;
             }
         }
     }
