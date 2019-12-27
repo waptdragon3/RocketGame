@@ -1,0 +1,5 @@
+add !rot #1 $1
+set $1 !rot
+out $1
+wait #.01
+jmp #0

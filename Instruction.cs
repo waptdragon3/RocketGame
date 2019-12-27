@@ -52,10 +52,10 @@ namespace RocketGame.FlightSystem
             RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
             return 0.0f;
         }
-        public static float Copy(Argument[] args)
+        public static float Set(Argument[] args)
         {
-            CheckArguments(args, "cpy", AType.GETABLE, AType.SETTABLE);
-            args[1].Value = args[0].Value;
+            CheckArguments(args, "set", AType.SETTABLE, AType.GETABLE);
+            args[0].Value = args[1].Value;
             RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
             return 0.0f;
         }
@@ -92,11 +92,47 @@ namespace RocketGame.FlightSystem
             else RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
             return 0.0f;
         }
+        public static float Out(Argument[] args)
+        {
+            CheckArguments(args, "out", AType.GETABLE);
+            Console.WriteLine(args[0].Value);
+            RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
+            return 0.0f;
+        }
     }
     public class Instruction
     {
         public Argument[] args;
         public Opcode Opcode;
+
+        public Instruction(Opcode opcode, Argument[] args)
+        {
+            this.args = args;
+            Opcode = opcode;
+        }
+        public static Instruction Parse(string line)
+        {
+            string[] words = line.Split(" ");
+            Opcode opcode = Opcode.GetOpcode(words[0]);
+            Argument[] args = new Argument[words.Length - 1];
+            for(int i = 0; i < args.Length; i++)
+            {
+                switch(words[i+1][0])
+                {
+                    case '$':
+                        args[i] = new MEMArg(words[i + 1].Substring(1));
+                        break;
+                    case '#':
+                        args[i] = new LITArg(words[i + 1].Substring(1));
+                        break;
+                    case '!':
+                        args[i] = new REGArg(words[i + 1].Substring(1));
+                        break;
+                }
+            }
+            return new Instruction(opcode, args);
+        }
+
         public float Run() => Opcode.Func.Invoke(args);
     }
     public class Opcode
@@ -108,9 +144,18 @@ namespace RocketGame.FlightSystem
             Label = l;
             Func = func;
         }
+        public static Opcode GetOpcode(string code)
+        {
+            foreach (var opc in Opcodes)
+            {
+                if (opc.Label == code)
+                    return opc;
+            }
+            return null;
+        }
         public static Opcode[] Opcodes = new Opcode[] { 
             new Opcode("add", Instructions.Add), new Opcode("sub", Instructions.Sub), new Opcode("mul", Instructions.Mul), new Opcode("div", Instructions.Div), new Opcode("mod", Instructions.Mod),
             new Opcode("jmp", Instructions.Jump),new Opcode("jlt", Instructions.JumpLT),new Opcode("jgt", Instructions.JumpGT),new Opcode("jeq", Instructions.JumpEQ),
-            new Opcode("wait", Instructions.Wait)};
+            new Opcode("wait", Instructions.Wait), new Opcode("set",Instructions.Set), new Opcode("out",Instructions.Out)};
     }
 }

@@ -10,11 +10,12 @@ namespace RocketGame.FlightSystem
         private Instruction[] Instructions;
         public int CurrentInstructionIndex = 0;
         private float waitTime = 0;
-        public static Program Parse(string pro)
+        public static Program Parse(string[] pro)
         {
-            var Instructions = new Instruction[0];
+            Instruction[] instructions = new Instruction[pro.Length];
+            for (int i = 0; i < pro.Length; i++) instructions[i] = Instruction.Parse(pro[i]);
             var p = new Program();
-            p.Instructions = Instructions;
+            p.Instructions = instructions;
             p.RAM = new RAM();
             return p;
         }
@@ -84,6 +85,7 @@ namespace RocketGame.FlightSystem
 
 
                 if (Name.ToLower().Equals("grav")) return RG.Planet.Gravity;
+                if (Name.ToLower().Equals("dt")) return RG.FrameTime;
                 throw new Exception(string.Format("The register name ({0}) is invalid", Name));
             }
             set
