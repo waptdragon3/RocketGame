@@ -52,6 +52,13 @@ namespace RocketGame.FlightSystem
             RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
             return 0.0f;
         }
+        public static float Pow(Argument[] args)
+        {
+            CheckArguments(args, "pow", AType.GETABLE, AType.GETABLE, AType.SETTABLE);
+            args[2].Value = MathF.Pow(args[0].Value, args[1].Value);
+            RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
+            return 0.0f;
+        }
         public static float Set(Argument[] args)
         {
             CheckArguments(args, "set", AType.SETTABLE, AType.GETABLE);
@@ -97,6 +104,13 @@ namespace RocketGame.FlightSystem
             CheckArguments(args, "out", AType.GETABLE);
             Console.WriteLine(args[0].Value);
             RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
+            return 0.0f;
+        }
+        public static float Halt(Argument[] args)
+        {
+            CheckArguments(args, "hlt");
+
+            RG.Rocket.ActiveProgram.Running = false;
             return 0.0f;
         }
     }
@@ -153,9 +167,9 @@ namespace RocketGame.FlightSystem
             }
             return null;
         }
-        public static Opcode[] Opcodes = new Opcode[] { 
-            new Opcode("add", Instructions.Add), new Opcode("sub", Instructions.Sub), new Opcode("mul", Instructions.Mul), new Opcode("div", Instructions.Div), new Opcode("mod", Instructions.Mod),
+        public static Opcode[] Opcodes = new Opcode[] {
+            new Opcode("add", Instructions.Add), new Opcode("sub", Instructions.Sub), new Opcode("mul", Instructions.Mul), new Opcode("div", Instructions.Div), new Opcode("mod", Instructions.Mod), new Opcode("pow", Instructions.Pow),
             new Opcode("jmp", Instructions.Jump),new Opcode("jlt", Instructions.JumpLT),new Opcode("jgt", Instructions.JumpGT),new Opcode("jeq", Instructions.JumpEQ),
-            new Opcode("wait", Instructions.Wait), new Opcode("set",Instructions.Set), new Opcode("out",Instructions.Out)};
+            new Opcode("wait", Instructions.Wait), new Opcode("set",Instructions.Set), new Opcode("out",Instructions.Out), new Opcode("hlt",Instructions.Halt)};
     }
 }

@@ -30,6 +30,8 @@ namespace RocketGame.Maths
 
         public static implicit operator SFML.System.Vector2f(Vector2 v) => new SFML.System.Vector2f(v.X, v.Y);
         public static implicit operator Vector2(SFML.System.Vector2f v) => new Vector2(v.X, v.Y);
+        public static implicit operator SFML.System.Vector2i(Vector2 v) => new SFML.System.Vector2i((int)v.X, (int)v.Y);
+        public static implicit operator Vector2(SFML.System.Vector2i v) => new Vector2(v.X, v.Y);
 
         public static Vector2 operator +(Vector2 v1, Vector2 v2) => new Vector2(v1.X + v2.X, v1.Y + v2.Y);
         public static Vector2 operator -(Vector2 v1, Vector2 v2) => new Vector2(v1.X - v2.X, v1.Y - v2.Y);

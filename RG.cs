@@ -11,6 +11,7 @@ namespace RocketGame
         public static bool Paused = false;
         public static Planet Planet { get; private set; }
         public static Rocket Rocket;
+        public static Font font;
         static void Main(string[] args)
         {
             Rocket = new Rocket();
@@ -18,8 +19,9 @@ namespace RocketGame
             Console.WriteLine("Total Dv = " + Rocket.DVRemaining);
             RenderWindow window = new RenderWindow(new VideoMode(1280, 720), "Rocket Game");
             window.Closed += Window_Closed;
+            window.KeyPressed += Window_KeyPressed;
             Clock clock = new Clock();
-            Font font = new Font("resources/prstart.ttf");
+            font = new Font("resources/prstart.ttf");
             UI ui = new UI(window);
             while(window.IsOpen)
             {
@@ -36,6 +38,14 @@ namespace RocketGame
                 ui.Draw();
 
                 window.Display();
+            }
+        }
+
+        private static void Window_KeyPressed(object sender, KeyEventArgs e)
+        {
+            if(e.Code == Keyboard.Key.Space)
+            {
+                Rocket.ActiveProgram.Running = !Rocket.ActiveProgram.Running;
             }
         }
 

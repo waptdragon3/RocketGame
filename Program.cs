@@ -10,6 +10,9 @@ namespace RocketGame.FlightSystem
         private Instruction[] Instructions;
         public int CurrentInstructionIndex = 0;
         private float waitTime = 0;
+
+        public bool Running { get; set; }
+
         public static Program Parse(string[] pro)
         {
             Instruction[] instructions = new Instruction[pro.Length];
@@ -21,12 +24,16 @@ namespace RocketGame.FlightSystem
         }
         public void RunFrame(float frameTime)
         {
-            if (CurrentInstructionIndex == Instructions.Length)
-                return;
-            waitTime -= frameTime;
-            while(waitTime <= 0)
+            if (Running)
             {
-                waitTime = Instructions[CurrentInstructionIndex].Run();
+                if (CurrentInstructionIndex == Instructions.Length)
+                    return;
+                waitTime -= frameTime;
+                while (waitTime <= 0)
+                {
+                    waitTime = Instructions[CurrentInstructionIndex].Run();
+                    if (!Running) return;
+                }
             }
         }
         

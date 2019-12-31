@@ -19,7 +19,7 @@ namespace RocketGame
         public float DVRemaining => Engine.Ve * (float)Math.Log(TotalMass / DryMass);
         public float Throttle = 0;
         public float Height => (720 - Position.X);
-        public float TWR => Engine.F / RG.Planet.Gravity / TotalMass;
+        public float TWR => Engine.F / TotalMass;
 
         public Program ActiveProgram;
 
@@ -35,17 +35,24 @@ namespace RocketGame
 
         public Rocket()
         {
-            RemainingFuelMass = MaxFuelMass;
+            Engine = new Engine();
             RocketS = new Sprite(new Texture("resources/rocket.png")) { Scale = Vector2.One * .1f, Origin = new Vector2(159, 256) };
             FiringS = new Sprite(new Texture("resources/rocketFiring.png")) { Scale = Vector2.One * .1f, Origin = new Vector2(159, 256) };
-            Throttle = 1;
+            Reset();
             //AngularVelocity = 360;
-            this.Position = new Vector2(640, 650);
+        }
+
+        public void Reset()
+        {
+            RemainingFuelMass = MaxFuelMass;
+            this.Position = new Vector2(640, 650 - 320);
             TGTRotation = 0;
-            Engine = new Engine();
-            string[] prog = System.IO.File.ReadAllLines("test.txt");
-            Console.WriteLine();
+            string[] prog = System.IO.File.ReadAllLines("program.txt");
             ActiveProgram = Program.Parse(prog);
+            Throttle = 0;
+            ActiveProgram.Running = false;
+            Velocity = Vector2.Zero;
+            AngularVelocity = 0;
         }
 
         public void Update()
@@ -68,24 +75,27 @@ namespace RocketGame
         }
         private void updatePhysics()
         {
-            Rotation += AngularVelocity * RG.FrameTime;
-            Position += Velocity * RG.FrameTime*1;
-
-            ActiveProgram.RunFrame(RG.FrameTime);
-            Throttle = MathF.Max(0, MathF.Min(1, Throttle));
-
-            AngularVelocity += (TGTRotation - Rotation) * RG.FrameTime * 90;
-            //Console.WriteLine(TGTRotation); 
-            Velocity += Vector2.Down * RG.Planet.Gravity * RG.FrameTime;
-            Vector2 thrust = Fwd * Engine.F * Throttle;
-            if (RemainingFuelMass > 0)
+            if (ActiveProgram.Running)
             {
-                Velocity += thrust * RG.FrameTime / TotalMass;
-                RemainingFuelMass -= Engine.MassFlowRate * Throttle*RG.FrameTime;
-            }
-            else
-            {
-                //Console.WriteLine(F);
+                Rotation += AngularVelocity * RG.FrameTime;
+                Position += Velocity * RG.FrameTime * 1;
+
+                ActiveProgram.RunFrame(RG.FrameTime);
+                Throttle = MathF.Max(0, MathF.Min(1, Throttle));
+
+                AngularVelocity += (TGTRotation - Rotation) * RG.FrameTime * 90;
+                //Console.WriteLine(TGTRotation); 
+                Velocity += Vector2.Down * RG.Planet.Gravity * RG.FrameTime;
+                Vector2 thrust = Fwd * Engine.F * Throttle;
+                if (RemainingFuelMass > 0)
+                {
+                    Velocity += thrust * RG.FrameTime / TotalMass;
+                    RemainingFuelMass -= Engine.MassFlowRate * Throttle * RG.FrameTime;
+                }
+                else
+                {
+                    //Console.WriteLine(F);
+                }
             }
         }
     }
