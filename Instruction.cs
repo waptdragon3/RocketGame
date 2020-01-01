@@ -102,7 +102,7 @@ namespace RocketGame.FlightSystem
         public static float Out(Argument[] args)
         {
             CheckArguments(args, "out", AType.GETABLE);
-            Console.WriteLine(args[0].Value);
+            RG.Log(args[0].Value);
             RG.Rocket.ActiveProgram.CurrentInstructionIndex++;
             return 0.0f;
         }
@@ -110,7 +110,7 @@ namespace RocketGame.FlightSystem
         {
             CheckArguments(args, "hlt");
 
-            RG.Rocket.ActiveProgram.Running = false;
+            RG.Rocket.ActiveProgram.Halted = true;
             return 0.0f;
         }
     }
@@ -142,6 +142,8 @@ namespace RocketGame.FlightSystem
                     case '!':
                         args[i] = new REGArg(words[i + 1].Substring(1));
                         break;
+                    default:
+                        throw new Exception(string.Format("Invalid argument prefix ({0})", words[i + 1][0]));
                 }
             }
             return new Instruction(opcode, args);
@@ -165,7 +167,7 @@ namespace RocketGame.FlightSystem
                 if (opc.Label == code)
                     return opc;
             }
-            return null;
+            throw new Exception(string.Format("Invalid opcode ({0})", code));
         }
         public static Opcode[] Opcodes = new Opcode[] {
             new Opcode("add", Instructions.Add), new Opcode("sub", Instructions.Sub), new Opcode("mul", Instructions.Mul), new Opcode("div", Instructions.Div), new Opcode("mod", Instructions.Mod), new Opcode("pow", Instructions.Pow),

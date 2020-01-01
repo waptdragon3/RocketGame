@@ -2,11 +2,13 @@
 using SFML.System;
 using SFML.Graphics;
 using SFML.Window;
+using RocketGame.Maths;
 
 namespace RocketGame
 {
     class RG
     {
+        public static Vector2 ScreenSize;
         public static float FrameTime;
         public static bool Paused = false;
         public static Planet Planet { get; private set; }
@@ -16,8 +18,9 @@ namespace RocketGame
         {
             Rocket = new Rocket();
             Planet = new Moon();
-            Console.WriteLine("Total Dv = " + Rocket.DVRemaining);
-            RenderWindow window = new RenderWindow(new VideoMode(1280, 720), "Rocket Game");
+            ScreenSize = new Vector2(1280, 720);
+            Log("Total Dv = " + Rocket.DVRemaining);
+            RenderWindow window = new RenderWindow(new VideoMode((uint)ScreenSize.X, (uint)ScreenSize.Y), "Rocket Game");
             window.Closed += Window_Closed;
             window.KeyPressed += Window_KeyPressed;
             Clock clock = new Clock();
@@ -32,7 +35,7 @@ namespace RocketGame
                 Rocket.Update();
                 window.Draw(Rocket.ActiveSprite);
 
-                Text dv = new Text(Rocket.Velocity.Mag.ToString("0.00")+ " m/s", font);
+                Text dv = new Text(Rocket.Velocity.Mag.ToString("0.00") + " m/s", font) { Position = new Vector2(ScreenSize.X * .9f, 0) };
                 window.Draw(dv);
 
                 ui.Draw();
@@ -45,7 +48,7 @@ namespace RocketGame
         {
             if(e.Code == Keyboard.Key.Space)
             {
-                Rocket.ActiveProgram.Running = !Rocket.ActiveProgram.Running;
+                Rocket.ActiveProgram.Halted = !Rocket.ActiveProgram.Halted;
             }
         }
 
@@ -53,5 +56,10 @@ namespace RocketGame
         {
             ((Window)sender).Close();
         }
+        public static void Log(object o)
+        {
+            Console.WriteLine(o);
+        }
     }
+
 }

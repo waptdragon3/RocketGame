@@ -11,7 +11,8 @@ namespace RocketGame.FlightSystem
         public int CurrentInstructionIndex = 0;
         private float waitTime = 0;
 
-        public bool Running { get; set; }
+        public bool Halted { get; set; }
+
 
         public static Program Parse(string[] pro)
         {
@@ -24,7 +25,7 @@ namespace RocketGame.FlightSystem
         }
         public void RunFrame(float frameTime)
         {
-            if (Running)
+            if (!Halted)
             {
                 if (CurrentInstructionIndex == Instructions.Length)
                     return;
@@ -32,7 +33,7 @@ namespace RocketGame.FlightSystem
                 while (waitTime <= 0)
                 {
                     waitTime = Instructions[CurrentInstructionIndex].Run();
-                    if (!Running) return;
+                    if (Halted) return;
                 }
             }
         }

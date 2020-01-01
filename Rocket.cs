@@ -9,8 +9,9 @@ namespace RocketGame
 {
     public class Rocket
     {
+        public bool Running = false;
         public Engine Engine;
-        public const float MaxFuelMass = 1000;
+        public const float MaxFuelMass = 2000;
         public float FuelPercent => RemainingFuelMass / MaxFuelMass;
 
         public float DryMass = 20000;
@@ -18,7 +19,7 @@ namespace RocketGame
         public float TotalMass => DryMass + RemainingFuelMass;
         public float DVRemaining => Engine.Ve * (float)Math.Log(TotalMass / DryMass);
         public float Throttle = 0;
-        public float Height => (720 - Position.X);
+        public float Height => (RG.ScreenSize.Y - Position.X);
         public float TWR => Engine.F / TotalMass;
 
         public Program ActiveProgram;
@@ -46,11 +47,12 @@ namespace RocketGame
         {
             RemainingFuelMass = MaxFuelMass;
             this.Position = new Vector2(640, 650 - 320);
+            Rotation = 0;
             TGTRotation = 0;
-            string[] prog = System.IO.File.ReadAllLines("program.txt");
-            ActiveProgram = Program.Parse(prog);
+            //string[] prog = System.IO.File.ReadAllLines("program.txt");
+            ActiveProgram = Program.Parse(new string[] { "hlt" });
             Throttle = 0;
-            ActiveProgram.Running = false;
+            ActiveProgram.Halted = false;
             Velocity = Vector2.Zero;
             AngularVelocity = 0;
         }
@@ -59,8 +61,6 @@ namespace RocketGame
         {
             updateSprites();
             updatePhysics();
-            
-            //System.Console.WriteLine(fwd.Direction + ": " + Rotation);
 
             //Rotation += 360f * Program.FrameTime.AsSeconds();
             //Position += Vector2.FromAngle(Rotation) * 10000f * Program.FrameTime;
@@ -75,7 +75,7 @@ namespace RocketGame
         }
         private void updatePhysics()
         {
-            if (ActiveProgram.Running)
+            if (Running)
             {
                 Rotation += AngularVelocity * RG.FrameTime;
                 Position += Velocity * RG.FrameTime * 1;
@@ -84,7 +84,7 @@ namespace RocketGame
                 Throttle = MathF.Max(0, MathF.Min(1, Throttle));
 
                 AngularVelocity += (TGTRotation - Rotation) * RG.FrameTime * 90;
-                //Console.WriteLine(TGTRotation); 
+
                 Velocity += Vector2.Down * RG.Planet.Gravity * RG.FrameTime;
                 Vector2 thrust = Fwd * Engine.F * Throttle;
                 if (RemainingFuelMass > 0)
@@ -94,7 +94,7 @@ namespace RocketGame
                 }
                 else
                 {
-                    //Console.WriteLine(F);
+
                 }
             }
         }
