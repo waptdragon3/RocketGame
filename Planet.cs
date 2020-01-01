@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using LibNoise;
 using RocketGame.Maths;
 
 namespace RocketGame
@@ -13,16 +12,18 @@ namespace RocketGame
         public Vector2 StartingVel;
         public float MaxHeight = 10;
         public float MaxDepth = -10;
-        protected LibNoise.Primitive.SimplexPerlin perlin;
+        public Noise Noise;
+        protected float width;
 
         public Planet()
         {
-            perlin = new LibNoise.Primitive.SimplexPerlin(0, NoiseQuality.Best);
+            width = 1024;
+            Noise = new Noise(10, .5f, width);
         }
 
         public virtual float GetHeight(float x)
         {
-            return Util.Bounds(perlin.GetValue(x), -1, 1) * (MaxHeight - MaxDepth) + MaxDepth;
+            return Util.Bounds(Noise.GetValue(x+width/2), -1, 1) * (MaxHeight - MaxDepth) + MaxDepth;
         }
     }
     /// <summary>

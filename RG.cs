@@ -14,19 +14,23 @@ namespace RocketGame
         public static Planet Planet { get; private set; }
         public static Rocket Rocket;
         public static Font font;
+        private static Console Console;
         static void Main(string[] args)
         {
             Rocket = new Rocket();
             Planet = new Moon();
             ScreenSize = new Vector2(1280, 720);
-            Log("Total Dv = " + Rocket.DVRemaining);
+            //Log("Total Dv = " + Rocket.DVRemaining);
             RenderWindow window = new RenderWindow(new VideoMode((uint)ScreenSize.X, (uint)ScreenSize.Y), "Rocket Game");
             window.Closed += Window_Closed;
             window.KeyPressed += Window_KeyPressed;
             Clock clock = new Clock();
             font = new Font("resources/prstart.ttf");
             UI ui = new UI(window);
-            while(window.IsOpen)
+            Console = new Console(font, 12, new Vector2(854, 480));
+            for (float x = 1; x < 1024; x++)
+                Log(Planet.GetHeight(x));
+            while (window.IsOpen)
             {
                 FrameTime = clock.Restart().AsSeconds();
                 window.DispatchEvents();
@@ -39,6 +43,8 @@ namespace RocketGame
                 window.Draw(dv);
 
                 ui.Draw();
+
+                Console.Render();
 
                 window.Display();
             }
@@ -55,10 +61,11 @@ namespace RocketGame
         private static void Window_Closed(object sender, EventArgs e)
         {
             ((Window)sender).Close();
+            Console.Close();
         }
         public static void Log(object o)
         {
-            Console.WriteLine(o);
+            Console.Log(o);
         }
     }
 

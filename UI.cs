@@ -260,13 +260,15 @@ namespace RocketGame
         {
             if (Selected)
             {
+                int prevY = CursorY;
                 if (e.Code == SFML.Window.Keyboard.Key.Left)
                 {
                     CursorX--;
                     if (CursorX < 0)
                     {
-                        CursorX = 0;
                         CursorY = Math.Max(0, CursorY - 1);
+                        CursorX = Text[CursorY].Length;
+                        if (prevY == 0) CursorX = 0;
                     }
                 }
                 else if (e.Code == SFML.Window.Keyboard.Key.Right)
@@ -275,7 +277,8 @@ namespace RocketGame
                     if (CursorX > Text[CursorY].Length)
                     {
                         CursorY = Math.Min(Text.Count - 1, CursorY + 1);
-                        CursorX = Text[CursorY].Length;
+                        CursorX = 0;
+                        if (prevY == Text.Count - 1) CursorX = Text[CursorY].Length;
                     }
                 }
                 else if (e.Code == SFML.Window.Keyboard.Key.Up)

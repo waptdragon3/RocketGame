@@ -131,20 +131,13 @@ namespace RocketGame.FlightSystem
             Argument[] args = new Argument[words.Length - 1];
             for(int i = 0; i < args.Length; i++)
             {
-                switch(words[i+1][0])
+                args[i] = (words[i + 1][0]) switch
                 {
-                    case '$':
-                        args[i] = new MEMArg(words[i + 1].Substring(1));
-                        break;
-                    case '#':
-                        args[i] = new LITArg(words[i + 1].Substring(1));
-                        break;
-                    case '!':
-                        args[i] = new REGArg(words[i + 1].Substring(1));
-                        break;
-                    default:
-                        throw new Exception(string.Format("Invalid argument prefix ({0})", words[i + 1][0]));
-                }
+                    '$' => new MEMArg(words[i + 1].Substring(1)),
+                    '#' => new LITArg(words[i + 1].Substring(1)),
+                    '!' => new REGArg(words[i + 1].Substring(1)),
+                    _ => throw new Exception(string.Format("Invalid argument prefix ({0})", words[i + 1][0])),
+                };
             }
             return new Instruction(opcode, args);
         }

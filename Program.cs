@@ -17,7 +17,14 @@ namespace RocketGame.FlightSystem
         public static Program Parse(string[] pro)
         {
             Instruction[] instructions = new Instruction[pro.Length];
-            for (int i = 0; i < pro.Length; i++) instructions[i] = Instruction.Parse(pro[i]);
+            int i = 0;
+            try
+            {
+                for (i = 0; i < pro.Length; i++) instructions[i] = Instruction.Parse(pro[i]);
+            }catch(Exception e)
+            {
+                throw new Exception(string.Format("Error on line {0}: {1}", i, e.Message));
+            }
             var p = new Program();
             p.Instructions = instructions;
             p.RAM = new RAM();
